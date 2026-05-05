@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Joao Pedro Fernandes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-OK6U4Qa46tXkKdhI86aenSsNwXVi5z4xV3iOIv0vHqzr6WvjmJ5eW5zKz1ME0tKp" crossorigin="anonymous" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            min-height: 100vh;
+            color: #212529;
+        }
+        .page-shell {
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 1.25rem;
+            box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.18);
+            padding: 2rem;
+        }
+        .start-btn {
+            border-radius: 2rem;
+            letter-spacing: 0.04em;
+        }
+        .webcam-frame {
+            max-width: 100%;
+            border-radius: 1rem;
+            box-shadow: 0 0.75rem 1.75rem rgba(13, 110, 253, 0.18);
+        }
+        .progress-range {
+            accent-color: #0d6efd;
+            pointer-events: none;
+        }
+        .score-card {
+            transition: transform 0.2s ease;
+        }
+        .score-card:hover {
+            transform: translateY(-3px);
+        }
+        .label-title {
+            min-width: 140px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="page-shell mx-auto">
+            <header class="text-center mb-5">
+                <span class="badge bg-primary bg-opacity-10 text-primary mb-3">Classificador de Imagem</span>
+                <h1 class="display-6 fw-bold">Site Joao Pedro Fernandes</h1>
+                <p class="text-muted fs-6">Permita a câmera e visualize o nível de correspondência de cada classe com barras de progresso.</p>
+            </header>
+
+            <div class="row gy-4">
+                <div class="col-12 col-xl-5">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h2 class="h5 mb-3">Controle da Câmera</h2>
+                            <p class="text-muted">Clique para iniciar e permitir o acesso à webcam. A câmera será exibida abaixo.</p>
+                            <button id="startButton" type="button" class="btn btn-primary btn-lg w-100 start-btn">Iniciar câmera</button>
+                            <div id="webcam-container" class="mt-4 d-flex justify-content-center"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-7">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h2 class="h5 mb-1">Resultados</h2>
+                                    <p class="text-muted mb-0">Veja as previsões e o nível de confiança de cada classe.</p>
+                                </div>
+                                <span class="badge bg-success bg-opacity-15 text-success">Atualização contínua</span>
+                            </div>
+                            <div id="label-container" class="row g-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="text-center text-muted mt-5">
+                Feito com Bootstrap e Teachable Machine para GitHub Pages.
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script>
+        const URL = "https://teachablemachine.withgoogle.com/models/GA6XiIQYS//";
+        let model, webcam, labelContainer, maxPredictions;
+        const startButton = document.getElementById("startButton");
+
+        startButton.addEventListener("click", init);
+
+        async function init() {
+            startButton.disabled = true;
+            startButton.textContent = "Carregando modelo...";
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            const flip = true;
+            webcam = new tmImage.Webcam(320, 320, flip);
+            await webcam.setup();
+            await webcam.play();
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            webcam.canvas.classList.add("webcam-frame");
+
+            labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = "";
+
+            for (let i = 0; i < maxPredictions; i++) {
+                const item = document.createElement("div");
+                item.className = "col-12 score-card";
+                item.innerHTML = `
+                    <div class="card border-0 shadow-sm p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="label-title class-name">Classe ${i + 1}</strong>
+                            <span class="badge bg-secondary percentage">0%</span>
+                        </div>
+                        <input type="range" class="form-range progress-range" min="0" max="100" value="0" disabled />
+                        <div class="progress mt-2" style="height: 0.65rem;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                `;
+                labelContainer.appendChild(item);
+            }
+
+            startButton.textContent = "Câmera ativada";
+            startButton.classList.remove("btn-primary");
+            startButton.classList.add("btn-success");
+            window.requestAnimationFrame(loop);
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            for (let i = 0; i < maxPredictions; i++) {
+                const percent = Math.round(prediction[i].probability * 100);
+                const item = labelContainer.children[i];
+                item.querySelector(".class-name").textContent = prediction[i].className;
+                item.querySelector(".percentage").textContent = `${percent}%`;
+                item.querySelector(".progress-range").value = percent;
+                const bar = item.querySelector(".progress-bar");
+                bar.style.width = `${percent}%`;
+                bar.setAttribute("aria-valuenow", percent);
+            }
+        }
+    </script>
+</body>
+</html>
