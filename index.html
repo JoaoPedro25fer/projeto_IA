@@ -6,38 +6,185 @@
     <title>Joao Pedro Fernandes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-OK6U4Qa46tXkKdhI86aenSsNwXVi5z4xV3iOIv0vHqzr6WvjmJ5eW5zKz1ME0tKp" crossorigin="anonymous" />
     <style>
+        :root {
+            color-scheme: dark;
+            --bg: #071223;
+            --surface: rgba(11, 19, 36, 0.90);
+            --surface-soft: rgba(14, 24, 48, 0.80);
+            --text: #edf2ff;
+            --muted: #a5b4fc;
+            --primary: #7c3aed;
+            --primary-soft: rgba(124, 58, 237, 0.14);
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.16);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 28px 95px rgba(0, 0, 0, 0.32);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            min-height: 100%;
+        }
+
         body {
-            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
-            min-height: 100vh;
-            color: #212529;
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.22), transparent 24%),
+                        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.18), transparent 22%),
+                        linear-gradient(135deg, #03060f 0%, #101d3f 100%);
+            color: var(--text);
         }
-        .page-shell {
-            background: rgba(255, 255, 255, 0.94);
-            border-radius: 1.25rem;
-            box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.18);
-            padding: 2rem;
-        }
-        .start-btn {
-            border-radius: 2rem;
-            letter-spacing: 0.04em;
-        }
-        .webcam-frame {
-            max-width: 100%;
-            border-radius: 1rem;
-            box-shadow: 0 0.75rem 1.75rem rgba(13, 110, 253, 0.18);
-        }
-        .progress-range {
-            accent-color: #0d6efd;
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -15%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent 55%);
+            filter: blur(60px);
             pointer-events: none;
+            z-index: 0;
         }
-        .score-card {
-            transition: transform 0.2s ease;
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -10%;
+            right: -10%;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.24), transparent 50%);
+            filter: blur(64px);
+            pointer-events: none;
+            z-index: 0;
         }
-        .score-card:hover {
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-shell {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+            border-radius: 2rem;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+        }
+
+        .hero-title {
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            color: #f8fbff;
+        }
+
+        .hero-badge {
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            color: #c7d2fe;
+        }
+
+        .start-btn {
+            border-radius: 999px;
+            background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+            border: none;
+            box-shadow: 0 18px 50px rgba(124, 58, 237, 0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .start-btn:hover {
             transform: translateY(-3px);
+            box-shadow: 0 28px 68px rgba(124, 58, 237, 0.26);
+            filter: brightness(1.03);
         }
-        .label-title {
-            min-width: 140px;
+
+        .start-btn:focus-visible {
+            outline: 2px solid rgba(124, 58, 237, 0.5);
+            outline-offset: 4px;
+        }
+
+        .webcam-frame {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 1.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 30px 75px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-card {
+            border-radius: 1.5rem;
+            background: rgba(8, 13, 31, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(124, 58, 237, 0.3);
+            background: rgba(15, 26, 52, 0.96);
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .section-card .card-body {
+            padding: 1.8rem;
+        }
+
+        h2, h1, p {
+            margin: 0;
+        }
+
+        .progress .progress-bar {
+            background: linear-gradient(90deg, #22c55e, #7c3aed);
+        }
+
+        .badge-soft {
+            background: rgba(124, 58, 237, 0.16);
+            color: #e0e7ff;
+        }
+
+        .footer-text {
+            color: #94a3b8;
+        }
+
+        .info-pill {
+            display: inline-flex;
+            gap: 0.65rem;
+            align-items: center;
+            padding: 0.55rem 0.95rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            font-size: 0.92rem;
+        }
+
+        .info-pill span {
+            width: 0.7rem;
+            height: 0.7rem;
+            border-radius: 50%;
+            background: #7c3aed;
+            display: inline-block;
+        }
+
+        .text-muted {
+            color: #bfc8ff !important;
+        }
+
+        @media (max-width: 768px) {
+            .page-shell {
+                padding: 1.6rem;
+            }
         }
     </style>
 </head>
@@ -45,41 +192,41 @@
     <div class="container py-5">
         <div class="page-shell mx-auto">
             <header class="text-center mb-5">
-                <span class="badge bg-primary bg-opacity-10 text-primary mb-3">Classificador de Imagem</span>
-                <h1 class="display-6 fw-bold">Site Joao Pedro Fernandes</h1>
-                <p class="text-muted fs-6">Permita a câmera e visualize o nível de correspondência de cada classe com barras de progresso.</p>
+                <span class="badge hero-badge bg-opacity-10 text-primary border border-white border-opacity-10">Classificador Inteligente</span>
+                <h1 class="display-5 fw-bold hero-title mt-3">Transforme a webcam em uma inteligência visual</h1>
+                <p class="mt-3 mb-0 text-muted">Um site elegante com modelo de imagem em tempo real, indicadores de confiança e uma interface preparada para GitHub Pages.</p>
             </header>
 
-            <div class="row gy-4">
+            <div class="row gy-4 align-items-start">
                 <div class="col-12 col-xl-5">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h2 class="h5 mb-3">Controle da Câmera</h2>
-                            <p class="text-muted">Clique para iniciar e permitir o acesso à webcam. A câmera será exibida abaixo.</p>
-                            <button id="startButton" type="button" class="btn btn-primary btn-lg w-100 start-btn">Iniciar câmera</button>
-                            <div id="webcam-container" class="mt-4 d-flex justify-content-center"></div>
+                    <div class="card section-card shadow-sm p-4 mb-4">
+                        <h2 class="h5 text-white mb-3">Iniciar Análise</h2>
+                        <p class="text-muted">Clique no botão para carregar o modelo, ativar a câmera e iniciar a classificação das imagens em tempo real.</p>
+                        <button id="startButton" type="button" class="btn btn-lg btn-primary w-100 start-btn">Iniciar câmera</button>
+                        <div id="webcam-container" class="mt-4 d-flex justify-content-center"></div>
+                        <div class="info-pill mt-4">
+                            <span></span>
+                            Resultados instantâneos com barras de progresso
                         </div>
                     </div>
                 </div>
 
                 <div class="col-12 col-xl-7">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h2 class="h5 mb-1">Resultados</h2>
-                                    <p class="text-muted mb-0">Veja as previsões e o nível de confiança de cada classe.</p>
-                                </div>
-                                <span class="badge bg-success bg-opacity-15 text-success">Atualização contínua</span>
+                    <div class="card section-card shadow-sm p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h2 class="h5 text-white mb-1">Painel de Resultados</h2>
+                                <p class="text-muted mb-0">Acompanhe cada classe com porcentagens claras e barras de progresso personalizadas.</p>
                             </div>
-                            <div id="label-container" class="row g-3"></div>
+                            <span class="badge badge-soft">Atualização ao vivo</span>
                         </div>
+                        <div id="label-container" class="row g-3"></div>
                     </div>
                 </div>
             </div>
 
-            <footer class="text-center text-muted mt-5">
-                Feito com Bootstrap e Teachable Machine para GitHub Pages.
+            <footer class="text-center footer-text mt-5">
+                Feito com Bootstrap, TensorFlow.js e Teachable Machine para um deploy rápido no GitHub Pages.
             </footer>
         </div>
     </div>
@@ -102,7 +249,7 @@
             maxPredictions = model.getTotalClasses();
 
             const flip = true;
-            webcam = new tmImage.Webcam(320, 320, flip);
+            webcam = new tmImage.Webcam(360, 360, flip);
             await webcam.setup();
             await webcam.play();
             document.getElementById("webcam-container").appendChild(webcam.canvas);
@@ -113,17 +260,18 @@
 
             for (let i = 0; i < maxPredictions; i++) {
                 const item = document.createElement("div");
-                item.className = "col-12 score-card";
+                item.className = "col-12 score-card p-3";
                 item.innerHTML = `
-                    <div class="card border-0 shadow-sm p-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <strong class="label-title class-name">Classe ${i + 1}</strong>
-                            <span class="badge bg-secondary percentage">0%</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <p class="mb-1 text-muted small">Classe</p>
+                            <strong class="class-name text-white">Classe ${i + 1}</strong>
                         </div>
-                        <input type="range" class="form-range progress-range" min="0" max="100" value="0" disabled />
-                        <div class="progress mt-2" style="height: 0.65rem;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
+                        <span class="badge bg-secondary percentage">0%</span>
+                    </div>
+                    <input type="range" class="form-range progress-range" min="0" max="100" value="0" disabled />
+                    <div class="progress mt-3" style="height: 0.8rem; border-radius: 999px; overflow: hidden;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 `;
                 labelContainer.appendChild(item);
